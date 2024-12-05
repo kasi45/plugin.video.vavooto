@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+# edit 2024-12-05 kasi
+
 import sys, xbmc, os, json, requests, urllib3, xbmcplugin, resolveurl, base64
 try: from resources.lib import utils
 except: from lib import utils
@@ -8,8 +11,10 @@ session = requests.session()
 BASEURL = "https://vavoo.to/ccapi/"
 try:from concurrent.futures import ThreadPoolExecutor, as_completed
 except:pass
-try: lines = json.loads(utils.addon.getSetting("favs"))
-except: lines=[]
+
+# edit kasi
+# try: lines = json.loads(utils.addon.getSetting("favs"))
+# except: lines=[]
 try: 
 	from infotagger.listitem import ListItemInfoTag
 	tagger = True
@@ -17,8 +22,10 @@ except: tagger = False
 
 def _index(params):
 	utils.set_content("files")
-	if len(lines)>0: addDir2("TV Favoriten (Live)", "DefaultAddonPVRClient", "favchannels")
-	addDir2("Live", "DefaultAddonPVRClient", "channels")
+	# edit kasi
+	# if len(lines)>0: addDir2("TV Favoriten (Live)", "DefaultAddonPVRClient", "favchannels")
+	# addDir2("Live", "DefaultAddonPVRClient", "channels")
+	addDir2("Live", "DefaultAddonPVRClient", "live")
 	addDir2("Filme", "DefaultMovies", "indexMovie")
 	addDir2("Serien", "DefaultTVShows", "indexSerie")
 	utils.end()

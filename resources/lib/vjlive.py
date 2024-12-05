@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+# edit 2024-12-05 kasi
+
 import sys, re, requests, time, xbmcgui, xbmc, json, os, os
 from resources.lib import utils
 try: 
@@ -41,7 +44,11 @@ def filterout(name):
 	elif "DMAX" in name: name = "DMAX"
 	elif "DISNEY" in name: name = "DISNEY CHANNEL"
 	elif "KINOWELT" in name: name = "KINOWELT"
-	elif "MDR" in name: name = "MDR"
+	elif "MDR" in name:	# edit kasi
+		if "TH" in name: name = "MDR THUERINGEN"
+		elif "ANHALT" in name: name = "MDR SACHSEN ANHALT"
+		elif "SACHSEN" in name: name = "MDR SACHSEN"
+		else: name = "MDR"
 	elif "NDR" in name: name = "NDR"
 	elif "RBB" in name: name = "RBB"
 	elif "SERVUS" in name: name = "SERVUS TV"
@@ -52,6 +59,7 @@ def filterout(name):
 		elif "PLUS" in name: name = "RTL UP"
 		elif "PASSION" in name: name = "RTL PASSION"
 		elif "LIVING" in name: name = "RTL LIVING"
+		else: name = "RTL"
 	elif "NITRO" in name: name = "RTL NITRO"
 	elif "UNIVERSAL" in name: name = "UNIVERSAL TV"
 	elif "WDR" in name: name = "WDR"
@@ -244,11 +252,12 @@ def makem3u():
 	dialog = xbmcgui.Dialog()
 	ok = dialog.ok('VAVOO.TO', 'm3u erstellt in %s' % m3uPath)
 		
-		
-def channels():
+# edit kasi
+def channels(items=None):
 	try: lines = json.loads(utils.addon.getSetting("favs"))
 	except: lines=[]
-	results = getchannels()
+	if items: results = json.loads(items)
+	else: results = getchannels()
 	for name in results:
 		name = name.strip()
 		index = len(results[name])
@@ -264,6 +273,7 @@ def channels():
 		cm.append(("Einstellungen", "RunPlugin(%s?action=settings)" % sys.argv[0]))
 		cm.append(("m3u erstellen", "RunPlugin(%s?action=makem3u)" % sys.argv[0]))
 		o.addContextMenuItems(cm)
+		o.setArt({'poster': 'DefaultTVShows.png', 'icon': 'DefaultTVShows.png'})
 		infoLabels={"title": title, "plot": plot}
 		if tagger:
 			info_tag = ListItemInfoTag(o, 'video')
@@ -302,3 +312,27 @@ def change_favorit(name, delete=False):
 	utils.addon.setSetting("favs", json.dumps(lines))
 	if len(lines) == 0: xbmc.executebuiltin("Action(ParentDir)")
 	else: xbmc.executebuiltin("Container.Refresh")
+
+# edit by kasi
+from .vjackson import addDir2
+def live():
+	try: lines = json.loads(utils.addon.getSetting("favs"))
+	except:	lines = []
+	if len(lines)>0: addDir2("Live - Favoriten", "DefaultAddonPVRClient", "favchannels")
+	addDir2("Live - Alle", "DefaultAddonPVRClient", "channels")
+	addDir2("Live - A bis Z", "DefaultAddonPVRClient", "a_z_tv")
+	utils.end()
+
+def a_z_tv():
+	from collections import defaultdict
+	from urllib.parse import quote_plus
+	results = getchannels()
+	res = defaultdict(dict)
+	for key, val in results.items():
+		prefix, number = key[:1].upper() if key[:1].isalpha() else "#", key
+		res[prefix][number] = val
+	res = dict(sorted(res.items()))
+	for key, val in res.items():
+		addDir2(key, "DefaultAddonPVRClient", "channels", items=json.dumps(val))
+	utils.end()
+
