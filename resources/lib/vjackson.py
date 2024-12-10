@@ -28,7 +28,7 @@ def _index(params):
 	addDir2("Live", "DefaultAddonPVRClient", "live")
 	addDir2("Filme", "DefaultMovies", "indexMovie")
 	addDir2("Serien", "DefaultTVShows", "indexSerie")
-	utils.end(cacheToDisc=False)
+	utils.end()
 
 def _indexMovie(params):
 	utils.set_content("movies")
