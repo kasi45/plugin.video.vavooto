@@ -321,7 +321,7 @@ def live():
 	if len(lines)>0: addDir2("Live - Favoriten", "DefaultAddonPVRClient", "favchannels")
 	addDir2("Live - Alle", "DefaultAddonPVRClient", "channels")
 	addDir2("Live - A bis Z", "DefaultAddonPVRClient", "a_z_tv")
-	utils.end()
+	utils.end(cacheToDisc=False)
 
 def a_z_tv():
 	from collections import defaultdict
